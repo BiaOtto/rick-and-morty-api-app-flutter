@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:rm_app/services/rm_api_service.dart';
+import 'detail_screen.dart';
 import '../models/character.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -41,26 +42,41 @@ class _HomeScreenState extends State<HomeScreen> {
               itemBuilder: (context, index) {
                 final character = characters[index];
                 return Card(
-                  margin: EdgeInsets.symmetric(horizontal: 16, vertical:8),
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   elevation: 4,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  
                   child: ListTile(
-                   leading: CachedNetworkImage(
-                    imageUrl: character.image, 
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => 
-                       const CircularProgressIndicator(),
-                       errorWidget: (context, url, error) => 
-                       const Icon(Icons.error),
-                  ),
+                    onTap: () {
+                      // Ao clicar, navega para a tela de detalhes
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailScreen(
+                            characterName: character.name,
+                            characterImage: character.image,
+                            characterStatus: character.status,
+                          ),
+                        ),
+                      );
+                    },
+                    leading: Hero(
+                      tag: character.name,  // Garantir que a tag seja única
+                      child: CachedNetworkImage(
+                        imageUrl: character.image,
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            const CircularProgressIndicator(),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                      ),
+                    ),
                     title: Text(character.name),
-                    subtitle: Text('Status:${character.status}'),
-                  )
+                    subtitle: Text('Status: ${character.status}'),
+                  ),
                 );
               },
             );
